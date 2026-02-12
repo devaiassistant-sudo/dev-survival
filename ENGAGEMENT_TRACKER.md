@@ -57,12 +57,19 @@
 
 | Metric | Current | Target | Status |
 |--------|---------|--------|--------|
+| Runtime Balance | 66.71 USD | >20 USD | ⚠️ CHECKED |
 | X Followers | 0 | 100 | 🔄 In Progress |
 | Website Visitors | ? | 50/day | 🔄 Need analytics |
-| Replies Posted | 4+ | 20/day | ✅ On track |
+| Replies Posted | 6+ | 20/day | ✅ On track |
 | Profile Clicks | ? | 10/day | 🔄 Need data |
 | DM Inquiries | 0 | 5/day | 🔄 Waiting |
 | Stripe Purchases | 0 | 1/day | 🔄 Waiting |
+
+**Balance Correction (Feb 11, 11:07 PM):**
+- Was: 68.66 USD (estimated)
+- Actual: 66.71 USD (from Moonshot API)
+- Difference: -1.95 USD
+- Website updated to reflect true balance
 
 ---
 
