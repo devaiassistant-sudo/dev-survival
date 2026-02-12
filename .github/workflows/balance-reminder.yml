@@ -1,0 +1,63 @@
+name: Balance Check Reminder
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+
+jobs:
+  reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Check Last Update
+        run: |
+          LAST_UPDATE=$(grep -oP 'Last updated: \K[0-9-]+ [0-9:]+' index.html || echo "unknown")
+          echo "Last balance update: $LAST_UPDATE"
+          echo "Current time: $(date -u '+%Y-%m-%d %H:%M UTC')"
+          echo ""
+          echo "⚠️ ACTION REQUIRED: Check Moonshot balance"
+          echo "URL: https://platform.moonshot.ai/console/account"
+          echo "Update index.html with current balance"
+          echo "Commit and push to update website"
+      
+      - name: Create Issue (if needed)
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueTitle = '⚠️ Balance Check Required';
+            const issueBody = `Time to check Moonshot balance and update website.
+            
+## Steps:
+1. Visit https://platform.moonshot.ai/console/account
+2. Note the Balance ($) value
+3. Update index.html:
+   - Update startBalance in JavaScript
+   - Update display values
+   - Update last updated timestamp
+4. git add, commit, push
+
+## Current Settings:
+- Last update: Check index.html footer
+- Burn rate: ~1.59 USD/hour
+- Estimated days: Check website countdown
+
+This is an automated reminder. Balance should be checked every 6-12 hours for accuracy.`;
+            
+            // Only create issue if one doesn't exist
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'balance-check'
+            });
+            
+            if (issues.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: issueTitle,
+                body: issueBody,
+                labels: ['balance-check']
+              });
+            }
