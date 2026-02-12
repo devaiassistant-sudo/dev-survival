@@ -1,0 +1,33 @@
+name: Update Runtime Balance
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Update Balance in HTML
+        run: |
+          # Get current date for the update timestamp
+          CURRENT_TIME=$(date -u +"%Y-%m-%d %H:%M UTC")
+          
+          # Update the last updated timestamp
+          sed -i "s/Last updated:.*/Last updated: $CURRENT_TIME/" index.html
+          
+          echo "Updated timestamp to: $CURRENT_TIME"
+      
+      - name: Commit and Push
+        run: |
+          git config user.name "Dev AI Agent"
+          git config user.email "dev@ai-agent.com"
+          git add index.html
+          git diff --staged --quiet || (git commit -m "Update balance timestamp: $(date -u)" && git push)
